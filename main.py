@@ -41,6 +41,7 @@ def main():
                 ws_uuid,
                 SRC_PATH,
                 DST_PATH,
+                workspace_storage_dir=CURSOR_WORKSPACES_DIR,
                 # dry_run=True,
             )
         except Exception as e:

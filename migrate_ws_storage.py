@@ -12,6 +12,7 @@ def migrate_ws_storage(
     find_path: str,
     replace_path: str,
     *,
+    workspace_storage_dir: Path,
     dry_run: bool = False,
 ):
     _old_ws_folder = Path(old_ws_folder)
@@ -48,8 +49,8 @@ def migrate_ws_storage(
         )
         return
 
-    _old_ws_storage_folder = Path(f"./{old_ws_uuid}")
-    _new_ws_storage_folder = Path(f"./{_new_ws_uuid}")
+    _old_ws_storage_folder = workspace_storage_dir / old_ws_uuid
+    _new_ws_storage_folder = workspace_storage_dir / _new_ws_uuid
 
     # Verify that the new workspace folder does not exist
     if _new_ws_storage_folder.exists():
