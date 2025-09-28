@@ -13,6 +13,9 @@ from migrate_ws_storage import migrate_ws_storage
 CURSOR_WORKSPACES_DIR = Path("./")
 USER_NAME = "vulon"
 
+SRC_PATH = f"Users/{USER_NAME}/OneDrive/Desktop"
+DST_PATH = f"Users/{USER_NAME}/Desktop"
+
 
 def main():
     if sys.platform != "win32":
@@ -26,26 +29,18 @@ def main():
 
     assert set(ds_2.columns) == {"ws_uuid", "folder", "workspace"}
 
-    # Ensure only OneDrive/Desktop is ever opened with Cursor
-    assert duckdb.sql(f"""
-    select count(*)
-    from ds_2
-    where folder LIKE '%Users/{USER_NAME}/OneDrive%' AND folder NOT LIKE '%Users/{USER_NAME}/OneDrive/Desktop%' AND folder NOT LIKE 'vscode-remote://%'
-    """).fetchone() == (0,)
-
     migrate_list = duckdb.sql(f"""
     select ws_uuid, folder
-    from ds_2 where folder LIKE '%Users/{USER_NAME}/OneDrive%' AND folder NOT LIKE 'vscode-remote://%'
+    from ds_2 where folder LIKE '%{SRC_PATH}%' AND folder NOT LIKE 'vscode-remote://%'
     """).fetchall()
-
 
     for ws_uuid, folder in tqdm(migrate_list):
         try:
             migrate_ws_storage(
                 posix_uri_to_windows_path(folder),
                 ws_uuid,
-                f"Users/{USER_NAME}/OneDrive/Desktop",
-                f"Users/{USER_NAME}/Desktop",
+                SRC_PATH,
+                DST_PATH,
                 # dry_run=True,
             )
         except Exception as e:
