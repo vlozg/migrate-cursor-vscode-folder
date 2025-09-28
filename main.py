@@ -52,10 +52,16 @@ def main_2():
     for ws_uuid, ws_json in zip(*load_vscode_workspace_storage(CURSOR_WORKSPACES_DIR)):
         new_obj = ws_json.copy()
         num_changes = 0
-        if "folder" in ws_json and not (ws_json["folder"].startswith("file:///") or ws_json["folder"].startswith("vscode-remote://")):
+        if "folder" in ws_json and not (
+            ws_json["folder"].startswith("file:///")
+            or ws_json["folder"].startswith("vscode-remote://")
+        ):
             new_obj["folder"] = windows_path_to_posix_uri(ws_json["folder"])
             num_changes += 1
-        if "workspace" in ws_json and not (ws_json["workspace"].startswith("file:///") or ws_json["workspace"].startswith("vscode-remote://")):
+        if "workspace" in ws_json and not (
+            ws_json["workspace"].startswith("file:///")
+            or ws_json["workspace"].startswith("vscode-remote://")
+        ):
             new_obj["workspace"] = windows_path_to_posix_uri(ws_json["workspace"])
             num_changes += 1
         if "workspace" in new_obj and "%5C" in new_obj["workspace"]:
@@ -68,7 +74,7 @@ def main_2():
             print(ws_uuid, num_changes)
             with open(f"./{ws_uuid}/workspace.json", "w") as fp:
                 json.dump(new_obj, fp)
-    
+
 
 if __name__ == "__main__":
     main()
